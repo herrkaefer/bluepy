@@ -627,7 +627,11 @@ class Peripheral(BluepyHelper):
                     }
 
     def __del__(self):
-        self.disconnect()
+        try:
+            self.disconnect()
+        except BrokenPipeError:
+            pass
+
 
 class ScanEntry:
     addrTypes = { 1 : ADDR_TYPE_PUBLIC,
