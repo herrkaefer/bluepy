@@ -305,11 +305,13 @@ class BluepyHelper(object):
     def _stopHelper(self):
         if self._helper is not None:
             DBG("Stopping ", helperExe)
-            self._poller.unregister(self._helper.stdout)
-            self._helper.stdin.write("quit\n")
-            self._helper.stdin.flush()
-            self._helper.wait(2.0)
-            self._helper = None
+            try:
+                self._poller.unregister(self._helper.stdout)
+                self._helper.stdin.write("quit\n")
+                self._helper.stdin.flush()
+                self._helper.wait(2.5)
+            finally:
+                self._helper = None
         if self._stderr is not None:
             self._stderr.close()
             self._stderr = None
