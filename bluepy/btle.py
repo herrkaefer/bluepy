@@ -302,7 +302,10 @@ class BluepyHelper:
             raise BTLEInternalError("Helper not started (did you call connect()?)")
         DBG("Sent: ", cmd)
         self._helper.stdin.write(cmd)
-        self._helper.stdin.flush()
+        try:
+            self._helper.stdin.flush()
+        except BrokenPipeError:
+            pass
 
     def _mgmtCmd(self, cmd):
         self._writeCmd(cmd + '\n')
