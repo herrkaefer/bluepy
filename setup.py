@@ -1,5 +1,4 @@
 """Python setup script for bluepy"""
-
 from setuptools.command.build_py import build_py
 from setuptools import setup
 import subprocess
@@ -7,17 +6,22 @@ import shlex
 import sys
 import os
 
-VERSION='1.3.0'
+
+VERSION = '1.3.1'
+
 
 def pre_install():
-    """Do the custom compiling of the bluepy-helper executable from the makefile"""
+    """
+    Do the custom compiling of the bluepy-helper executable from the makefile
+    """
     try:
         print("Working dir is " + os.getcwd())
-        with open("bluepy/version.h","w") as verfile:
+        with open("bluepy/version.h", "w") as verfile:
             verfile.write('#define VERSION_STRING "%s"\n' % VERSION)
-        for cmd in [ "make -C ./bluepy clean", "make -C bluepy -j1" ]:
+        for cmd in ["make -C ./bluepy clean", "make -C bluepy -j1"]:
             print("execute " + cmd)
-            msgs = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT)
+            subprocess.check_output(
+                shlex.split(cmd), stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         print("Failed to compile bluepy-helper. Exiting install.")
         print("Command was " + repr(cmd) + " in " + os.getcwd())
@@ -25,13 +29,15 @@ def pre_install():
         print("Output was:\n%s" % e.output)
         sys.exit(1)
 
+
 class my_build_py(build_py):
     def run(self):
         pre_install()
         build_py.run(self)
 
+
 setup_cmdclass = {
-    'build_py' : my_build_py,
+    'build_py': my_build_py,
 }
 
 # Force package to be *not* pure Python
@@ -50,7 +56,7 @@ except ImportError:
     pass
 
 
-setup (
+setup(
     name='bluepy',
     version=VERSION,
     description='Python module for interfacing with BLE devices through Bluez',
@@ -58,16 +64,17 @@ setup (
     author_email='website-contact@fenditton.org',
     url='https://github.com/IanHarvey/bluepy',
     download_url='https://github.com/IanHarvey/bluepy/tarball/v/%s' % VERSION,
-    keywords=[ 'Bluetooth', 'Bluetooth Smart', 'BLE', 'Bluetooth Low Energy' ],
+    keywords=['Bluetooth', 'Bluetooth Smart', 'BLE', 'Bluetooth Low Energy'],
     classifiers=[
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.6',
     ],
     packages=['bluepy'],
-    
+
     package_data={
-        'bluepy': ['bluepy-helper', '*.json', 'bluez-src.tgz', 'bluepy-helper.c', 'version.h', 'Makefile']
+        'bluepy': ['bluepy-helper', '*.json', 'bluez-src.tgz',
+                   'bluepy-helper.c', 'version.h', 'Makefile']
     },
     cmdclass=setup_cmdclass,
     entry_points={
@@ -78,4 +85,3 @@ setup (
         ]
     }
 )
-
