@@ -291,7 +291,7 @@ class BluepyHelper:
             self._poller.unregister(self._helper.stdout)
             self._helper.stdin.write("quit\n")
             self._helper.stdin.flush()
-            self._helper.wait(1.0)
+            self._helper.wait(2.0)
             self._helper = None
         if self._stderr is not None:
             self._stderr.close()
@@ -301,8 +301,8 @@ class BluepyHelper:
         if self._helper is None:
             raise BTLEInternalError("Helper not started (did you call connect()?)")
         DBG("Sent: ", cmd)
-        self._helper.stdin.write(cmd)
         try:
+            self._helper.stdin.write(cmd)
             self._helper.stdin.flush()
         except BrokenPipeError:
             pass
